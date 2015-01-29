@@ -9,6 +9,7 @@
     "resources": {
         "media": [
             {
+                "menuIcon": true,
                 "file": "images/menu_icon.png",
                 "name": "IMAGE_MENU_ICON",
                 "type": "png"
@@ -27,12 +28,6 @@
                 "file": "fonts/UbuntuMono-Regular.ttf",
                 "name": "MONO_FONT_14",
                 "type": "font"
-            },
-            {
-                "file": "images/icon.png",
-                "menuIcon": true,
-                "name": "IMAGES_ICON_PNG",
-                "type": "png"
             }
         ]
     },
