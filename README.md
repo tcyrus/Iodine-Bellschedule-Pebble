@@ -1,2 +1,2 @@
 # iodine-bellschedule-pebble
-An Iodine Bell Schedule App for the Peeble
+An Iodine Bell Schedule App for the Pebble
