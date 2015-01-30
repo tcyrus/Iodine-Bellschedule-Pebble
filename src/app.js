@@ -40,46 +40,58 @@ splashWindow.add(text);
 splashWindow.show();
 
 ajax({url:"https://iodine.tjhsst.edu/ajax/dayschedule/json",type:"json"},function(data) {
-  // Create an array of Menu items
+  // Get the type of Bell Schedule
+  var dayType=data.dayname;
+  // Create an array of Periods
   var menuItems=parseFeed(data);
-  // Construct Menu to show to user
-  var resultsMenu=new UI.Menu({
-    sections:[{
-      title:'Bell Schedule',
-      items:menuItems
-    }]
-  });
   
-  // Add an action for SELECT
-  resultsMenu.on('select',function(e) {
-    // Create the Card for detailed view
-    var detailCard=new UI.Card({
-      title:e.item.title,
-      subtitle:e.item.subtitle
+  if (0===Object.keys(menuItems).length) {
+    var dayCard=new UI.Card({
+      title:dayType,
+      subtitle:"No Periods Available"
     });
-    detailCard.show();
-  });
-  
-  // Show the Menu, hide the splash
-  resultsMenu.show();
+    dayCard.show();
+  } else {
+    // Construct Menu to show to user
+    var resultsMenu=new UI.Menu({
+      sections:[{
+        title:dayType,
+        items:menuItems
+      }]
+    });
+    
+    // Show the Menu
+    resultsMenu.show();
+    
+    // Add an action for SELECT
+    resultsMenu.on('select',function(e) {
+      // Create the Card for detailed view
+      var detailCard=new UI.Card({
+        title:e.item.title,
+        subtitle:e.item.subtitle
+      });
+      detailCard.show();
+    });
+    
+    // Register for 'tap' events
+    resultsMenu.on('accelTap',function(e) {
+      // Make another request to iodine
+      ajax({url:"https://iodine.tjhsst.edu/ajax/dayschedule/json",type:"json"},function(data) {
+        // Create an array of Menu items
+        var newItems=parseFeed(data);
+        
+        // Update the Menu's first section
+        resultsMenu.items(0,newItems);
+        
+        // Notify the user
+        Vibe.vibrate('short');
+      }, function(error) {
+        console.log('Download failed: '+error);
+      });
+    });
+  }
+  // Hide the splash
   splashWindow.hide();
-  
-  // Register for 'tap' events
-  resultsMenu.on('accelTap',function(e) {
-    // Make another request to openweathermap.org
-    ajax({url:"https://iodine.tjhsst.edu/ajax/dayschedule/json",type:"json"},function(data) {
-      // Create an array of Menu items
-      var newItems=parseFeed(data);
-      
-      // Update the Menu's first section
-      resultsMenu.items(0,newItems);
-      
-      // Notify the user
-      Vibe.vibrate('short');
-    }, function(error) {
-      console.log('Download failed: '+error);
-    });
-  });
 }, function(error) {
  console.log("Download failed: "+error);
 });
